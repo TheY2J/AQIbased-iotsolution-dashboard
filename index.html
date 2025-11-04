@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AQI Monitoring Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-backdrop"></div>
+        <div class="login-box">
+            <div class="login-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+                </svg>
+            </div>
+            
+            <h1 class="login-title">AQI Monitor</h1>
+            <p class="login-subtitle">AI-Enabled IoT Air Quality System</p>
+            
+            <div class="login-form">
+                <div class="form-group">
+                    <label>Device ID</label>
+                    <input type="text" id="deviceId" placeholder="Enter device ID">
+                </div>
+                
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="password" placeholder="Enter password">
+                </div>
+                
+                <button id="loginBtn" class="login-button" type="button">Connect Device</button>
+            </div>
+            
+            <div class="login-demo">
+                <p>Demo credentials: DEV001, DEV002, or DEV003 / demo123</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard" style="display: none;">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="header-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="header-title" id="deviceName">Device Name</h1>
+                        <div class="header-location">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                            <span id="deviceLocation">Location</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: 12px;">
+                                <path d="M5 12.55a11 11 0 0 1 14.08 0"/>
+                                <path d="M1.42 9a16 16 0 0 1 21.16 0"/>
+                                <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+                                <line x1="12" y1="20" x2="12.01" y2="20"/>
+                            </svg>
+                            <span class="status-connected">Connected</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="header-right">
+                    <button class="header-btn" id="notificationBtn" type="button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+                            <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+                        </svg>
+                        <span class="notification-badge" id="notificationBadge" style="display: none;"></span>
+                    </button>
+                    <button class="header-btn" type="button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </button>
+                    <button class="logout-btn" id="logoutBtn" type="button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                            <polyline points="16 17 21 12 16 7"/>
+                            <line x1="21" y1="12" x2="9" y2="12"/>
+                        </svg>
+                        <span>Logout</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="container">
+            <!-- Main AQI Card -->
+            <div class="main-card">
+                <div class="main-card-content">
+                    <div class="aqi-section">
+                        <div class="aqi-header">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                            </svg>
+                            <h2>Real-Time Air Quality Index</h2>
+                        </div>
+                        
+                        <div class="aqi-display">
+                            <div class="aqi-value" id="aqiValue">78</div>
+                            <div class="aqi-status" id="aqiStatus">Moderate</div>
+                        </div>
+                        
+                        <div class="mini-cards">
+                            <div class="mini-card">
+                                <div class="mini-card-header">
+                                    <span>Temperature</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/>
+                                    </svg>
+                                </div>
+                                <div class="mini-card-value" id="temperature">24.0°C</div>
+                            </div>
+                            
+                            <div class="mini-card">
+                                <div class="mini-card-header">
+                                    <span>Humidity</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+                                    </svg>
+                                </div>
+                                <div class="mini-card-value" id="humidity">65%</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="prediction-card">
+                        <div class="prediction-header">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                                <polyline points="17 6 23 6 23 12"/>
+                            </svg>
+                            <h3>AI Prediction</h3>
+                        </div>
+                        
+                        <div class="prediction-content">
+                            <div class="prediction-item">
+                                <p class="prediction-label">Next Hour Forecast</p>
+                                <p class="prediction-value" id="predictedAQI">82</p>
+                                <p class="prediction-trend">↑ increasing</p>
+                            </div>
+                            
+                            <div class="prediction-divider"></div>
+                            
+                            <div class="prediction-item">
+                                <p class="prediction-label">Confidence Level</p>
+                                <div class="confidence-bar">
+                                    <div class="confidence-fill" id="confidenceFill" style="width: 87%"></div>
+                                </div>
+                                <p class="confidence-text" id="confidenceText">87%</p>
+                            </div>
+                            
+                            <div class="prediction-divider"></div>
+                            
+                            <div class="recommendation">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                                    <line x1="12" y1="9" x2="12" y2="13"/>
+                                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                                </svg>
+                                <p id="recommendation">Consider reducing outdoor activities in the next 2 hours</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pollutant Cards -->
+            <div class="pollutant-grid">
+                <div class="pollutant-card" id="co2Card">
+                    <div class="pollutant-header">
+                        <h3>CO₂</h3>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+                        </svg>
+                    </div>
+                    <div class="pollutant-value">
+                        <span class="value" id="co2Value">650</span>
+                        <span class="unit">ppm</span>
+                    </div>
+                    <div class="pollutant-footer">
+                        <span>Safe limit: 1000</span>
+                        <span class="status-normal" id="co2Status">✓ Normal</span>
+                    </div>
+                </div>
+
+                <div class="pollutant-card" id="coCard">
+                    <div class="pollutant-header">
+                        <h3>CO</h3>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/>
+                        </svg>
+                    </div>
+                    <div class="pollutant-value">
+                        <span class="value" id="coValue">3.2</span>
+                        <span class="unit">ppm</span>
+                    </div>
+                    <div class="pollutant-footer">
+                        <span>Safe limit: 9</span>
+                        <span class="status-normal" id="coStatus">✓ Normal</span>
+                    </div>
+                </div>
+
+                <div class="pollutant-card" id="o3Card">
+                    <div class="pollutant-header">
+                        <h3>O₃</h3>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                        </svg>
+                    </div>
+                    <div class="pollutant-value">
+                        <span class="value" id="o3Value">45</span>
+                        <span class="unit">ppb</span>
+                    </div>
+                    <div class="pollutant-footer">
+                        <span>Safe limit: 70</span>
+                        <span class="status-normal" id="o3Status">✓ Normal</span>
+                    </div>
+                </div>
+
+                <div class="pollutant-card" id="vocCard">
+                    <div class="pollutant-header">
+                        <h3>VOCs</h3>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+                        </svg>
+                    </div>
+                    <div class="pollutant-value">
+                        <span class="value" id="vocValue">180</span>
+                        <span class="unit">ppb</span>
+                    </div>
+                    <div class="pollutant-footer">
+                        <span>Safe limit: 220</span>
+                        <span class="status-normal" id="vocStatus">✓ Normal</span>
+                    </div>
+                </div>
+
+                <div class="pollutant-card" id="pm25Card">
+                    <div class="pollutant-header">
+                        <h3>PM2.5</h3>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+                        </svg>
+                    </div>
+                    <div class="pollutant-value">
+                        <span class="value" id="pm25Value">35</span>
+                        <span class="unit">µg/m³</span>
+                    </div>
+                    <div class="pollutant-footer">
+                        <span>Safe limit: 35</span>
+                        <span class="status-normal" id="pm25Status">✓ Normal</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="chart-grid">
+                <div class="chart-card">
+                    <h3>AQI Trend (24h)</h3>
+                    <canvas id="aqiChart"></canvas>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Pollutants Comparison</h3>
+                    <canvas id="pollutantsChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Notifications Panel -->
+            <div class="notifications-panel" id="notificationsPanel" style="display: none;">
+                <div class="notifications-header">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+                        <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+                    </svg>
+                    <h3>Recent Alerts</h3>
+                </div>
+                <div id="notificationsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
